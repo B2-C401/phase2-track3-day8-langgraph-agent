@@ -1,0 +1,11 @@
+=== PHASE 1 (pre-crash) ===
+thread_id=demo-crash-resume-S07
+attempt=1
+errors=['transient failure attempt=1']
+next_nodes=('dead_letter',)
+=== PHASE 2 (post-resume) ===
+recovered_attempt=1
+recovered_errors=['transient failure attempt=1']
+next_nodes_before_resume=('dead_letter',)
+final_answer=Request could not be completed after maximum retry attempts. Logged for manual review.
+state_history_len=7

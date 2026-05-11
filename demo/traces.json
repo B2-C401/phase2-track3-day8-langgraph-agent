@@ -1,0 +1,4480 @@
+{
+  "generated_at": "2026-05-11T04:57:55.514400+00:00",
+  "scenarios": [
+    {
+      "id": "S01_simple",
+      "query": "How do I reset my password?",
+      "expected_route": "simple",
+      "header": "A customer asks a generic question — no tool call needed.",
+      "requires_approval": false,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:How do I reset my password?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "simple",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:How do I reset my password?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=simple",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "answer",
+          "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+          "state_after": {
+            "route": "simple",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "This is a safe mock answer. Replace with your agent response.",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:How do I reset my password?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=simple",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "simple",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "This is a safe mock answer. Replace with your agent response.",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:How do I reset my password?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=simple",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "simple",
+        "success": true,
+        "retry_count": 0,
+        "interrupt_count": 0,
+        "nodes_visited": 4
+      },
+      "alt_paths": {}
+    },
+    {
+      "id": "S02_tool",
+      "query": "Please lookup order status for order 12345",
+      "expected_route": "tool",
+      "header": "Customer wants to know their order status — the graph must call a backend tool.",
+      "requires_approval": false,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "tool",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=tool",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "tool",
+          "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+          "state_after": {
+            "route": "tool",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S02_tool"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=tool",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "tool_results",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "evaluate",
+          "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+          "state_after": {
+            "route": "tool",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S02_tool"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=tool",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "evaluation_result",
+            "events"
+          ]
+        },
+        {
+          "index": 5,
+          "node": "answer",
+          "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+          "state_after": {
+            "route": "tool",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S02_tool",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S02_tool"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=tool",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 6,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "tool",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S02_tool",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Please lookup order status for order 123"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S02_tool"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=tool",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "tool",
+        "success": true,
+        "retry_count": 0,
+        "interrupt_count": 0,
+        "nodes_visited": 6
+      },
+      "alt_paths": {}
+    },
+    {
+      "id": "S03_missing",
+      "query": "Can you fix it?",
+      "expected_route": "missing_info",
+      "header": "Customer's message is too vague to act on — graph asks for clarification.",
+      "requires_approval": false,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Can you fix it?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "missing_info",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Can you fix it?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=missing_info",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "clarify",
+          "narration": "The agent realized the question is too vague (short, contains 'it'/'this'/'that' with no context). Instead of guessing, it asks a clarifying question. Hallucination prevention 101.",
+          "state_after": {
+            "route": "missing_info",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "Can you provide the order id or the missing context?",
+            "pending_question": "Can you provide the order id or the missing context?",
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Can you fix it?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=missing_info",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "clarify",
+                "event_type": "completed",
+                "message": "missing information requested",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "pending_question",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "missing_info",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "Can you provide the order id or the missing context?",
+            "pending_question": "Can you provide the order id or the missing context?",
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Can you fix it?"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=missing_info",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "clarify",
+                "event_type": "completed",
+                "message": "missing information requested",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "missing_info",
+        "success": true,
+        "retry_count": 0,
+        "interrupt_count": 0,
+        "nodes_visited": 4
+      },
+      "alt_paths": {}
+    },
+    {
+      "id": "S04_risky",
+      "query": "Refund this customer and send confirmation email",
+      "expected_route": "risky",
+      "header": "Refund request — risky action requiring human approval before execution.",
+      "requires_approval": true,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "risky_action",
+          "narration": "The customer asked for something destructive (refund, delete account, send email). The agent prepares a proposed action — but does NOT execute it yet. It needs human approval first.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "proposed_action",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "approval",
+          "narration": "Human-in-the-loop checkpoint. The agent pauses, presents the proposed action, and waits for a human to approve or reject. In this demo you can choose Approve or Reject and watch the graph branch.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": null,
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "approval",
+            "events"
+          ]
+        },
+        {
+          "index": 5,
+          "node": "tool",
+          "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": null,
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S04_risky"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "tool_results",
+            "events"
+          ]
+        },
+        {
+          "index": 6,
+          "node": "evaluate",
+          "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S04_risky"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "evaluation_result",
+            "events"
+          ]
+        },
+        {
+          "index": 7,
+          "node": "answer",
+          "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S04_risky",
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S04_risky"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 8,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S04_risky",
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Refund this customer and send confirmati"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S04_risky"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "risky",
+        "success": true,
+        "retry_count": 0,
+        "interrupt_count": 1,
+        "nodes_visited": 8
+      },
+      "alt_paths": {
+        "rejected": {
+          "label": "rejected by reviewer",
+          "description": "Reviewer clicked REJECT. The graph routes to clarify instead of executing the risky action — no refund/deletion happens.",
+          "steps": [
+            {
+              "index": 0,
+              "node": "start",
+              "narration": "The customer's message just arrived. The agent is about to start processing it.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [],
+                "tool_results": [],
+                "errors": [],
+                "events": []
+              },
+              "diff_keys": [
+                "risk_level",
+                "attempt",
+                "max_attempts"
+              ]
+            },
+            {
+              "index": 1,
+              "node": "intake",
+              "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "messages",
+                "events"
+              ]
+            },
+            {
+              "index": 2,
+              "node": "classify",
+              "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "route",
+                "risk_level",
+                "events"
+              ]
+            },
+            {
+              "index": 3,
+              "node": "risky_action",
+              "narration": "The customer asked for something destructive (refund, delete account, send email). The agent prepares a proposed action — but does NOT execute it yet. It needs human approval first.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "proposed_action",
+                "events"
+              ]
+            },
+            {
+              "index": 4,
+              "node": "approval",
+              "narration": "Human-in-the-loop checkpoint. The agent pauses, presents the proposed action, and waits for a human to approve or reject. In this demo you can choose Approve or Reject and watch the graph branch.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "approval",
+                "events"
+              ]
+            },
+            {
+              "index": 5,
+              "node": "clarify",
+              "narration": "The agent realized the question is too vague (short, contains 'it'/'this'/'that' with no context). Instead of guessing, it asks a clarifying question. Hallucination prevention 101.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": "Can you provide the order id or the missing context?",
+                "pending_question": "Can you provide the order id or the missing context?",
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "clarify",
+                    "event_type": "completed",
+                    "message": "missing information requested",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "final_answer",
+                "pending_question",
+                "events"
+              ]
+            },
+            {
+              "index": 6,
+              "node": "finalize",
+              "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": "Can you provide the order id or the missing context?",
+                "pending_question": "Can you provide the order id or the missing context?",
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Refund this customer and send confirmati"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "clarify",
+                    "event_type": "completed",
+                    "message": "missing information requested",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "finalize",
+                    "event_type": "completed",
+                    "message": "workflow finished",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "events"
+              ]
+            }
+          ],
+          "final_metrics": {
+            "route": "risky",
+            "success": true,
+            "retry_count": 0,
+            "interrupt_count": 1,
+            "nodes_visited": 6
+          }
+        }
+      }
+    },
+    {
+      "id": "S05_error",
+      "query": "Timeout failure while processing request",
+      "expected_route": "error",
+      "header": "Tool call fails transiently — graph retries up to 3 times before succeeding.",
+      "requires_approval": false,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "retry",
+          "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              }
+            ]
+          },
+          "diff_keys": [
+            "attempt",
+            "errors",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "tool",
+          "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "tool_results",
+            "events"
+          ]
+        },
+        {
+          "index": 5,
+          "node": "evaluate",
+          "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "needs_retry",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "evaluation_result",
+            "events"
+          ]
+        },
+        {
+          "index": 6,
+          "node": "retry",
+          "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 2,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "needs_retry",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1",
+              "transient failure attempt=2"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 2
+                }
+              }
+            ]
+          },
+          "diff_keys": [
+            "attempt",
+            "errors",
+            "events"
+          ]
+        },
+        {
+          "index": 7,
+          "node": "tool",
+          "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 2,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "needs_retry",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error",
+              "mock-tool-result for scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1",
+              "transient failure attempt=2"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 2
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=2",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "tool_results",
+            "events"
+          ]
+        },
+        {
+          "index": 8,
+          "node": "evaluate",
+          "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 2,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error",
+              "mock-tool-result for scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1",
+              "transient failure attempt=2"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 2
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=2",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "evaluation_result",
+            "events"
+          ]
+        },
+        {
+          "index": 9,
+          "node": "answer",
+          "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 2,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S05_error",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error",
+              "mock-tool-result for scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1",
+              "transient failure attempt=2"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 2
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=2",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 10,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 2,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S05_error",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Timeout failure while processing request"
+            ],
+            "tool_results": [
+              "ERROR: transient failure attempt=1/3 scenario=S05_error",
+              "mock-tool-result for scenario=S05_error"
+            ],
+            "errors": [
+              "transient failure attempt=1",
+              "transient failure attempt=2"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result indicates failure, retry needed",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 2
+                }
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=2",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "error",
+        "success": true,
+        "retry_count": 2,
+        "interrupt_count": 0,
+        "nodes_visited": 10
+      },
+      "alt_paths": {
+        "time_travel_fork": {
+          "label": "time-travel fork (inject attempt=2)",
+          "description": "At this checkpoint we used graph.update_state() to inject attempt=2. When the tool node runs next it sees attempt>=2 and returns success instead of the simulated transient ERROR — so the second retry is skipped.",
+          "fork_step_index": 3,
+          "steps": [
+            {
+              "index": 0,
+              "node": "start",
+              "narration": "The customer's message just arrived. The agent is about to start processing it.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [],
+                "tool_results": [],
+                "errors": [],
+                "events": []
+              },
+              "diff_keys": [
+                "risk_level",
+                "attempt",
+                "max_attempts"
+              ]
+            },
+            {
+              "index": 1,
+              "node": "intake",
+              "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "messages",
+                "events"
+              ]
+            },
+            {
+              "index": 2,
+              "node": "classify",
+              "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "route",
+                "risk_level",
+                "events"
+              ]
+            },
+            {
+              "index": 3,
+              "node": "retry",
+              "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 1,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [],
+                "errors": [
+                  "transient failure attempt=1"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  }
+                ]
+              },
+              "diff_keys": [
+                "attempt",
+                "errors",
+                "events"
+              ]
+            },
+            {
+              "index": 4,
+              "node": "retry",
+              "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 1,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [],
+                "errors": [
+                  "transient failure attempt=1"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  }
+                ]
+              },
+              "diff_keys": []
+            },
+            {
+              "index": 5,
+              "node": "tool",
+              "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 1,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "tool_results",
+                "events"
+              ]
+            },
+            {
+              "index": 6,
+              "node": "evaluate",
+              "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 1,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "needs_retry",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "evaluation_result",
+                "events"
+              ]
+            },
+            {
+              "index": 7,
+              "node": "retry",
+              "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 2,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "needs_retry",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1",
+                  "transient failure attempt=2"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 2
+                    }
+                  }
+                ]
+              },
+              "diff_keys": [
+                "attempt",
+                "errors",
+                "events"
+              ]
+            },
+            {
+              "index": 8,
+              "node": "tool",
+              "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 2,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "needs_retry",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error",
+                  "mock-tool-result for scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1",
+                  "transient failure attempt=2"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 2
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=2",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "tool_results",
+                "events"
+              ]
+            },
+            {
+              "index": 9,
+              "node": "evaluate",
+              "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 2,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "success",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error",
+                  "mock-tool-result for scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1",
+                  "transient failure attempt=2"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 2
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=2",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result satisfactory",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "evaluation_result",
+                "events"
+              ]
+            },
+            {
+              "index": 10,
+              "node": "answer",
+              "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 2,
+                "max_attempts": 3,
+                "final_answer": "I found: mock-tool-result for scenario=S05_error",
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "success",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error",
+                  "mock-tool-result for scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1",
+                  "transient failure attempt=2"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 2
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=2",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result satisfactory",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "answer",
+                    "event_type": "completed",
+                    "message": "answer generated",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "final_answer",
+                "events"
+              ]
+            },
+            {
+              "index": 11,
+              "node": "finalize",
+              "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+              "state_after": {
+                "route": "error",
+                "risk_level": "low",
+                "attempt": 2,
+                "max_attempts": 3,
+                "final_answer": "I found: mock-tool-result for scenario=S05_error",
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": "success",
+                "messages": [
+                  "intake:Timeout failure while processing request"
+                ],
+                "tool_results": [
+                  "ERROR: transient failure attempt=1/3 scenario=S05_error",
+                  "mock-tool-result for scenario=S05_error"
+                ],
+                "errors": [
+                  "transient failure attempt=1",
+                  "transient failure attempt=2"
+                ],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=error",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 1
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=1",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result indicates failure, retry needed",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "retry",
+                    "event_type": "completed",
+                    "message": "retry attempt recorded",
+                    "latency_ms": 0,
+                    "metadata": {
+                      "attempt": 2
+                    }
+                  },
+                  {
+                    "node": "tool",
+                    "event_type": "completed",
+                    "message": "tool executed attempt=2",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "evaluate",
+                    "event_type": "completed",
+                    "message": "tool result satisfactory",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "answer",
+                    "event_type": "completed",
+                    "message": "answer generated",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "finalize",
+                    "event_type": "completed",
+                    "message": "workflow finished",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "events"
+              ]
+            }
+          ],
+          "final_metrics": {
+            "route": "error",
+            "success": true,
+            "retry_count": 2,
+            "interrupt_count": 0,
+            "nodes_visited": 10
+          }
+        }
+      }
+    },
+    {
+      "id": "S06_delete",
+      "query": "Delete customer account after support verification",
+      "expected_route": "risky",
+      "header": "Account deletion request — another risky action gated by approval.",
+      "requires_approval": true,
+      "max_attempts": 3,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "risky_action",
+          "narration": "The customer asked for something destructive (refund, delete account, send email). The agent prepares a proposed action — but does NOT execute it yet. It needs human approval first.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "proposed_action",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "approval",
+          "narration": "Human-in-the-loop checkpoint. The agent pauses, presents the proposed action, and waits for a human to approve or reject. In this demo you can choose Approve or Reject and watch the graph branch.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": null,
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "approval",
+            "events"
+          ]
+        },
+        {
+          "index": 5,
+          "node": "tool",
+          "narration": "The agent calls a backend system to fetch data (order status, account info, etc.). For demo purposes this is a mock — but in production it would hit a real API. If the route is 'error', this node fails on purpose for the first few attempts to demonstrate retries.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": null,
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S06_delete"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "tool_results",
+            "events"
+          ]
+        },
+        {
+          "index": 6,
+          "node": "evaluate",
+          "narration": "After the tool runs, the agent checks: did it work? If the result contains 'ERROR', the agent flags it as needing a retry. Otherwise it moves on to writing the answer. This is the 'done?' check that makes the retry loop possible.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S06_delete"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "evaluation_result",
+            "events"
+          ]
+        },
+        {
+          "index": 7,
+          "node": "answer",
+          "narration": "The agent writes a final response — either grounded in tool results (if a tool was called) or a safe canned reply for simple questions.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S06_delete",
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S06_delete"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 8,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "risky",
+            "risk_level": "high",
+            "attempt": 0,
+            "max_attempts": 3,
+            "final_answer": "I found: mock-tool-result for scenario=S06_delete",
+            "pending_question": null,
+            "proposed_action": "prepare refund or external action; approval required",
+            "approval": {
+              "approved": true,
+              "reviewer": "mock-reviewer",
+              "comment": "mock approve for demo"
+            },
+            "evaluation_result": "success",
+            "messages": [
+              "intake:Delete customer account after support ve"
+            ],
+            "tool_results": [
+              "mock-tool-result for scenario=S06_delete"
+            ],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=risky",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "risky_action",
+                "event_type": "pending_approval",
+                "message": "approval required",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "approval",
+                "event_type": "completed",
+                "message": "approved=True",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "tool",
+                "event_type": "completed",
+                "message": "tool executed attempt=0",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "evaluate",
+                "event_type": "completed",
+                "message": "tool result satisfactory",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "answer",
+                "event_type": "completed",
+                "message": "answer generated",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "risky",
+        "success": true,
+        "retry_count": 0,
+        "interrupt_count": 1,
+        "nodes_visited": 8
+      },
+      "alt_paths": {
+        "rejected": {
+          "label": "rejected by reviewer",
+          "description": "Reviewer clicked REJECT. The graph routes to clarify instead of executing the risky action — no refund/deletion happens.",
+          "steps": [
+            {
+              "index": 0,
+              "node": "start",
+              "narration": "The customer's message just arrived. The agent is about to start processing it.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [],
+                "tool_results": [],
+                "errors": [],
+                "events": []
+              },
+              "diff_keys": [
+                "risk_level",
+                "attempt",
+                "max_attempts"
+              ]
+            },
+            {
+              "index": 1,
+              "node": "intake",
+              "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+              "state_after": {
+                "route": "",
+                "risk_level": "unknown",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "messages",
+                "events"
+              ]
+            },
+            {
+              "index": 2,
+              "node": "classify",
+              "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": null,
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "route",
+                "risk_level",
+                "events"
+              ]
+            },
+            {
+              "index": 3,
+              "node": "risky_action",
+              "narration": "The customer asked for something destructive (refund, delete account, send email). The agent prepares a proposed action — but does NOT execute it yet. It needs human approval first.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": null,
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "proposed_action",
+                "events"
+              ]
+            },
+            {
+              "index": 4,
+              "node": "approval",
+              "narration": "Human-in-the-loop checkpoint. The agent pauses, presents the proposed action, and waits for a human to approve or reject. In this demo you can choose Approve or Reject and watch the graph branch.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": null,
+                "pending_question": null,
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "approval",
+                "events"
+              ]
+            },
+            {
+              "index": 5,
+              "node": "clarify",
+              "narration": "The agent realized the question is too vague (short, contains 'it'/'this'/'that' with no context). Instead of guessing, it asks a clarifying question. Hallucination prevention 101.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": "Can you provide the order id or the missing context?",
+                "pending_question": "Can you provide the order id or the missing context?",
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "clarify",
+                    "event_type": "completed",
+                    "message": "missing information requested",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "final_answer",
+                "pending_question",
+                "events"
+              ]
+            },
+            {
+              "index": 6,
+              "node": "finalize",
+              "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+              "state_after": {
+                "route": "risky",
+                "risk_level": "high",
+                "attempt": 0,
+                "max_attempts": 3,
+                "final_answer": "Can you provide the order id or the missing context?",
+                "pending_question": "Can you provide the order id or the missing context?",
+                "proposed_action": "prepare refund or external action; approval required",
+                "approval": {
+                  "approved": false,
+                  "reviewer": "mock-reviewer",
+                  "comment": "mock reject for demo"
+                },
+                "evaluation_result": null,
+                "messages": [
+                  "intake:Delete customer account after support ve"
+                ],
+                "tool_results": [],
+                "errors": [],
+                "events": [
+                  {
+                    "node": "intake",
+                    "event_type": "completed",
+                    "message": "query normalized",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "classify",
+                    "event_type": "completed",
+                    "message": "route=risky",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "risky_action",
+                    "event_type": "pending_approval",
+                    "message": "approval required",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "approval",
+                    "event_type": "completed",
+                    "message": "approved=False",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "clarify",
+                    "event_type": "completed",
+                    "message": "missing information requested",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  },
+                  {
+                    "node": "finalize",
+                    "event_type": "completed",
+                    "message": "workflow finished",
+                    "latency_ms": 0,
+                    "metadata": {}
+                  }
+                ]
+              },
+              "diff_keys": [
+                "events"
+              ]
+            }
+          ],
+          "final_metrics": {
+            "route": "risky",
+            "success": true,
+            "retry_count": 0,
+            "interrupt_count": 1,
+            "nodes_visited": 6
+          }
+        }
+      }
+    },
+    {
+      "id": "S07_dead_letter",
+      "query": "System failure cannot recover after multiple attempts",
+      "expected_route": "error",
+      "header": "Repeated failure with max_attempts=1 — graph gives up and escalates.",
+      "requires_approval": false,
+      "max_attempts": 1,
+      "steps": [
+        {
+          "index": 0,
+          "node": "start",
+          "narration": "The customer's message just arrived. The agent is about to start processing it.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 1,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [],
+            "tool_results": [],
+            "errors": [],
+            "events": []
+          },
+          "diff_keys": [
+            "risk_level",
+            "attempt",
+            "max_attempts"
+          ]
+        },
+        {
+          "index": 1,
+          "node": "intake",
+          "narration": "The agent receives the customer's message. It cleans up the text (removes extra spaces) and gets it ready for analysis.",
+          "state_after": {
+            "route": "",
+            "risk_level": "unknown",
+            "attempt": 0,
+            "max_attempts": 1,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:System failure cannot recover after mult"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "messages",
+            "events"
+          ]
+        },
+        {
+          "index": 2,
+          "node": "classify",
+          "narration": "The agent scans the message for trigger words and decides which path to take. Risky actions (refund, delete, send) get top priority, then tool requests (status, order, lookup), then vague questions, then errors. If none match, it's a simple question.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 0,
+            "max_attempts": 1,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:System failure cannot recover after mult"
+            ],
+            "tool_results": [],
+            "errors": [],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "route",
+            "risk_level",
+            "events"
+          ]
+        },
+        {
+          "index": 3,
+          "node": "retry",
+          "narration": "The previous step failed. The agent increments the attempt counter and decides what to do next. If we haven't exceeded max_attempts, try again. Otherwise, escalate to dead-letter.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 1,
+            "final_answer": null,
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:System failure cannot recover after mult"
+            ],
+            "tool_results": [],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              }
+            ]
+          },
+          "diff_keys": [
+            "attempt",
+            "errors",
+            "events"
+          ]
+        },
+        {
+          "index": 4,
+          "node": "dead_letter",
+          "narration": "Too many retries — the agent gives up gracefully. It writes a 'we couldn't help, please contact support' message and logs the failure for manual review. Better than retrying forever or silently failing.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 1,
+            "final_answer": "Request could not be completed after maximum retry attempts. Logged for manual review.",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:System failure cannot recover after mult"
+            ],
+            "tool_results": [],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "dead_letter",
+                "event_type": "completed",
+                "message": "max retries exceeded, attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "final_answer",
+            "events"
+          ]
+        },
+        {
+          "index": 5,
+          "node": "finalize",
+          "narration": "Wrap-up step: emit a final audit event so the metrics system knows the run is done. Every path ends here, then exits to END.",
+          "state_after": {
+            "route": "error",
+            "risk_level": "low",
+            "attempt": 1,
+            "max_attempts": 1,
+            "final_answer": "Request could not be completed after maximum retry attempts. Logged for manual review.",
+            "pending_question": null,
+            "proposed_action": null,
+            "approval": null,
+            "evaluation_result": null,
+            "messages": [
+              "intake:System failure cannot recover after mult"
+            ],
+            "tool_results": [],
+            "errors": [
+              "transient failure attempt=1"
+            ],
+            "events": [
+              {
+                "node": "intake",
+                "event_type": "completed",
+                "message": "query normalized",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "classify",
+                "event_type": "completed",
+                "message": "route=error",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "retry",
+                "event_type": "completed",
+                "message": "retry attempt recorded",
+                "latency_ms": 0,
+                "metadata": {
+                  "attempt": 1
+                }
+              },
+              {
+                "node": "dead_letter",
+                "event_type": "completed",
+                "message": "max retries exceeded, attempt=1",
+                "latency_ms": 0,
+                "metadata": {}
+              },
+              {
+                "node": "finalize",
+                "event_type": "completed",
+                "message": "workflow finished",
+                "latency_ms": 0,
+                "metadata": {}
+              }
+            ]
+          },
+          "diff_keys": [
+            "events"
+          ]
+        }
+      ],
+      "final_metrics": {
+        "route": "error",
+        "success": true,
+        "retry_count": 1,
+        "interrupt_count": 0,
+        "nodes_visited": 5
+      },
+      "alt_paths": {}
+    }
+  ]
+}

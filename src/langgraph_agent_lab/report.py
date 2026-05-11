@@ -31,4 +31,7 @@ Explain your architecture, state schema, failure modes, and improvement plan.
 def write_report(metrics: MetricsReport, output_path: str | Path) -> None:
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() and "TODO(student)" not in path.read_text(encoding="utf-8"):
+        # Preserve student-authored report; only refresh the stub.
+        return
     path.write_text(render_report_stub(metrics), encoding="utf-8")

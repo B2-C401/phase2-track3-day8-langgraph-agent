@@ -13,7 +13,7 @@ typecheck:
 	mypy src
 
 run-scenarios:
-	python -m langgraph_agent_lab.cli run-scenarios --config configs/lab.yaml --output outputs/metrics.json
+	python -m langgraph_agent_lab.cli run-scenarios --config configs/lab.yaml --output outputs/metrics1.json
 
 grade-local:
 	python -m langgraph_agent_lab.cli validate-metrics --metrics outputs/metrics.json

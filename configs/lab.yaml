@@ -1,3 +1,4 @@
-scenarios_path: data/sample/scenarios.jsonl
-checkpointer: memory
+scenarios_path: data/sample/scenarios_hidden.jsonl
+checkpointer: memory          # set to "sqlite" for crash-resume demo
+# database_url: outputs/checkpoints.db   # used when checkpointer is sqlite
 report_path: reports/lab_report.md

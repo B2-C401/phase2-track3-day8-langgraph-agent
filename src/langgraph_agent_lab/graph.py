@@ -21,11 +21,16 @@ from .nodes import (
     risky_action_node,
     tool_node,
 )
-from .routing import route_after_approval, route_after_classify, route_after_evaluate, route_after_retry
+from .routing import (
+    route_after_approval,
+    route_after_classify,
+    route_after_evaluate,
+    route_after_retry,
+)
 from .state import AgentState
 
 
-def build_graph(checkpointer: Any | None = None):
+def build_graph(checkpointer: Any | None = None) -> Any:
     """Build and compile the LangGraph workflow.
 
     TODO(student): review the architecture and modify nodes/edges only with a clear reason.
@@ -40,7 +45,9 @@ def build_graph(checkpointer: Any | None = None):
     try:
         from langgraph.graph import END, START, StateGraph
     except Exception as exc:  # pragma: no cover - helpful install error
-        raise RuntimeError("LangGraph is required. Run: pip install -e '.[dev]' or pip install langgraph") from exc
+        raise RuntimeError(
+            "LangGraph is required. Run: pip install -e '.[dev]' or pip install langgraph"
+        ) from exc
 
     graph = StateGraph(AgentState)
     graph.add_node("intake", intake_node)

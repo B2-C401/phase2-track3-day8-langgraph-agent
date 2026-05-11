@@ -38,9 +38,19 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "ANN"]
-ignore = ["ANN101", "ANN102"]
+# ANN101/ANN102 are removed in modern ruff; ANN401 (Any) is needed at lib boundaries
+# (checkpointer factory, event metadata) where third-party types aren't fully typed.
+ignore = ["ANN101", "ANN102", "ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test functions don't need return annotations or arg annotations from pytest fixtures.
+"tests/*" = ["ANN001", "ANN201", "ANN202"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
 addopts = "-q --strict-markers"
 testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true

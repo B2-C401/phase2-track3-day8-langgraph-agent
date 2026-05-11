@@ -8,6 +8,40 @@ from __future__ import annotations
 
 from .state import AgentState, ApprovalDecision, Route, make_event
 
+_PUNCT = "?!.,;:'\""
+
+# Enumerate common inflections so whole-word matching catches conjugations
+# without falling into substring traps like "check" matching "checkout".
+_RISKY_KW = {
+    "refund", "refunds", "refunded", "refunding",
+    "delete", "deletes", "deleted", "deleting", "deletion",
+    "send", "sends", "sent", "sending",
+    "cancel", "cancels", "cancelled", "canceled", "cancelling", "canceling",
+    "remove", "removes", "removed", "removing", "removal",
+    "revoke", "revokes", "revoked", "revoking",
+}
+_TOOL_KW = {
+    "status", "statuses",
+    "order", "orders",
+    "lookup", "lookups",
+    "check", "checks", "checked", "checking",
+    "track", "tracks", "tracked", "tracking",
+    "find", "finds", "found", "finding",
+    "search", "searches", "searched", "searching",
+}
+_ERROR_KW = {
+    "timeout", "timeouts",
+    "fail", "fails", "failed", "failing", "failure", "failures",
+    "error", "errors",
+    "crash", "crashes", "crashed", "crashing",
+    "unavailable", "broken", "broke",
+}
+_PRONOUN_KW = {"it", "this", "that"}
+
+
+def _tokenize(query: str) -> set[str]:
+    return {w.strip(_PUNCT) for w in query.lower().split()} - {""}
+
 
 def intake_node(state: AgentState) -> dict:
     """Normalize raw query into state fields.
@@ -25,23 +59,21 @@ def intake_node(state: AgentState) -> dict:
 def classify_node(state: AgentState) -> dict:
     """Classify the query into a route.
 
-    TODO(student): replace keyword heuristics with a clear routing policy.
-    Required routes: simple, tool, missing_info, risky, error.
+    Priority order is fixed: risky -> tool -> missing_info -> error -> simple.
+    Whole-word token matching against enumerated inflections — catches "crashed"
+    without matching "check" in "checkout".
     """
-    query = state.get("query", "").lower()
-    words = query.split()
-    clean_words = [w.strip("?!.,;:") for w in words]
-    route = Route.SIMPLE
-    risk_level = "low"
-    if "refund" in query or "delete" in query or "send" in query:
-        route = Route.RISKY
-        risk_level = "high"
-    elif "status" in query or "order" in query or "lookup" in query:
-        route = Route.TOOL
-    elif len(clean_words) < 5 and "it" in clean_words:
-        route = Route.MISSING_INFO
-    elif "timeout" in query or "fail" in query:
-        route = Route.ERROR
+    tokens = _tokenize(state.get("query", ""))
+    if tokens & _RISKY_KW:
+        route, risk_level = Route.RISKY, "high"
+    elif tokens & _TOOL_KW:
+        route, risk_level = Route.TOOL, "low"
+    elif len(tokens) < 5 and tokens & _PRONOUN_KW:
+        route, risk_level = Route.MISSING_INFO, "low"
+    elif tokens & _ERROR_KW:
+        route, risk_level = Route.ERROR, "low"
+    else:
+        route, risk_level = Route.SIMPLE, "low"
     return {
         "route": route.value,
         "risk_level": risk_level,
@@ -66,13 +98,22 @@ def tool_node(state: AgentState) -> dict:
     """Call a mock tool.
 
     Simulates transient failures for error-route scenarios to demonstrate retry loops.
-    TODO(student): implement idempotent tool execution and structured tool results.
+    Fail threshold is derived from scenario.max_attempts so each scenario controls how
+    many transient failures it simulates: fail until attempt == max_attempts - 1, then
+    succeed. This keeps S05 (max_attempts=3 → fail twice, succeed on third try) and
+    S07 (max_attempts=1 → never reaches tool because retry exhausts immediately) both
+    correct without hardcoding the count.
     """
     attempt = int(state.get("attempt", 0))
-    if state.get("route") == Route.ERROR.value and attempt < 2:
-        result = f"ERROR: transient failure attempt={attempt} scenario={state.get('scenario_id', 'unknown')}"
+    max_attempts = int(state.get("max_attempts", 3))
+    scenario_id = state.get("scenario_id", "unknown")
+    fail_threshold = max(0, max_attempts - 1)
+    if state.get("route") == Route.ERROR.value and attempt < fail_threshold:
+        result = (
+            f"ERROR: transient failure attempt={attempt}/{max_attempts} scenario={scenario_id}"
+        )
     else:
-        result = f"mock-tool-result for scenario={state.get('scenario_id', 'unknown')}"
+        result = f"mock-tool-result for scenario={scenario_id}"
     return {
         "tool_results": [result],
         "events": [make_event("tool", "completed", f"tool executed attempt={attempt}")],
@@ -158,7 +199,9 @@ def evaluate_node(state: AgentState) -> dict:
     if "ERROR" in latest:
         return {
             "evaluation_result": "needs_retry",
-            "events": [make_event("evaluate", "completed", "tool result indicates failure, retry needed")],
+            "events": [
+                make_event("evaluate", "completed", "tool result indicates failure, retry needed")
+            ],
         }
     return {
         "evaluation_result": "success",
@@ -172,9 +215,15 @@ def dead_letter_node(state: AgentState) -> dict:
     Third layer of error strategy: retry -> fallback -> dead letter.
     TODO(student): persist to dead-letter queue, alert on-call, or create support ticket.
     """
+    attempt = state.get("attempt", 0)
     return {
-        "final_answer": "Request could not be completed after maximum retry attempts. Logged for manual review.",
-        "events": [make_event("dead_letter", "completed", f"max retries exceeded, attempt={state.get('attempt', 0)}")],
+        "final_answer": (
+            "Request could not be completed after maximum retry attempts. "
+            "Logged for manual review."
+        ),
+        "events": [
+            make_event("dead_letter", "completed", f"max retries exceeded, attempt={attempt}")
+        ],
     }
 
 

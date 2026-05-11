@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Day 08 LangGraph Lab — Interactive Demo</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #fbbf24;
+  --accent-glow: rgba(251, 191, 36, 0.45);
+  --route-simple: #3b82f6;
+  --route-tool: #14b8a6;
+  --route-missing_info: #f59e0b;
+  --route-risky: #ef4444;
+  --route-error: #a855f7;
+  --route-dead: #6b7280;
+  --edge-default: #475569;
+  --diff: rgba(251, 191, 36, 0.5);
+  --approve: #10b981;
+  --reject: #f43f5e;
+  --fork: #8b5cf6;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--panel);
+  border-bottom: 1px solid var(--panel-2);
+  padding: 12px 20px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controls select, .controls button {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 150ms;
+}
+
+.controls button:hover, .controls select:hover {
+  background: #475569;
+}
+
+.controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.controls .path-wrap {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--fork);
+  border-radius: 6px;
+}
+
+.controls .path-wrap.shown {
+  display: flex;
+}
+
+.controls .path-wrap label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.step-counter {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 80px;
+}
+
+.query {
+  margin: 8px 0 0 0;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.query strong { color: var(--accent); }
+
+.scenario-header {
+  margin: 4px 0 0 0;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.alt-banner {
+  margin: 8px 0 0 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  display: none;
+  border-left: 3px solid var(--fork);
+  background: rgba(139, 92, 246, 0.12);
+  color: #ddd6fe;
+}
+
+.alt-banner.shown { display: block; }
+
+.alt-banner.rejected {
+  border-left-color: var(--reject);
+  background: rgba(244, 63, 94, 0.12);
+  color: #fecdd3;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 16px;
+  padding: 16px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.graph-panel {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 720px;
+  position: relative;
+}
+
+svg.graph {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.node rect {
+  fill: var(--panel-2);
+  stroke: #64748b;
+  stroke-width: 1.5;
+  transition: all 300ms ease-in-out;
+}
+
+.node text {
+  fill: var(--text);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-size: 13px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.node.pending rect {
+  fill: var(--panel-2);
+  stroke: #475569;
+  opacity: 0.45;
+}
+
+.node.pending text {
+  opacity: 0.5;
+}
+
+.node.active rect {
+  fill: #422006;
+  stroke: var(--accent);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+  transform: scale(1.08);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.node.visited rect {
+  stroke-width: 2;
+  opacity: 1;
+}
+
+.node.visited.route-simple rect { stroke: var(--route-simple); fill: rgba(59, 130, 246, 0.12); }
+.node.visited.route-tool rect { stroke: var(--route-tool); fill: rgba(20, 184, 166, 0.12); }
+.node.visited.route-missing_info rect { stroke: var(--route-missing_info); fill: rgba(245, 158, 11, 0.12); }
+.node.visited.route-risky rect { stroke: var(--route-risky); fill: rgba(239, 68, 68, 0.12); }
+.node.visited.route-error rect { stroke: var(--route-error); fill: rgba(168, 85, 247, 0.12); }
+
+.terminal rect {
+  fill: var(--panel-2);
+  stroke: #94a3b8;
+}
+
+.terminal text {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.edge {
+  stroke: var(--edge-default);
+  stroke-width: 1.5;
+  fill: none;
+  transition: stroke 200ms, stroke-width 200ms;
+}
+
+.edge.traversed { stroke-width: 2.5; }
+
+.edge.route-simple.traversed { stroke: var(--route-simple); }
+.edge.route-tool.traversed { stroke: var(--route-tool); }
+.edge.route-missing_info.traversed { stroke: var(--route-missing_info); }
+.edge.route-risky.traversed { stroke: var(--route-risky); }
+.edge.route-error.traversed { stroke: var(--route-error); }
+
+.edge.pulse {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-dasharray: 6 4;
+  animation: dash 600ms linear;
+}
+
+@keyframes dash {
+  from { stroke-dashoffset: 30; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* fork marker on the graph */
+.fork-marker {
+  fill: none;
+  stroke: var(--fork);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 3;
+  display: none;
+}
+
+.fork-marker.shown { display: block; }
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--panel-2);
+  padding-bottom: 8px;
+}
+
+dl.state {
+  margin: 0;
+  font-size: 13px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 12px;
+}
+
+dl.state dt {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+dl.state dd {
+  margin: 0;
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: 12px;
+  word-break: break-word;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: transparent;
+  transition: background 1000ms ease-out;
+}
+
+dl.state dd.just-changed {
+  background: var(--diff);
+}
+
+dl.state dd.muted {
+  color: var(--muted);
+  font-style: italic;
+}
+
+details.array-field summary {
+  cursor: pointer;
+  color: var(--text);
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-size: 12px;
+}
+
+details.array-field pre {
+  margin: 6px 0 0 0;
+  padding: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: pre-wrap;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.narration {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.narration .node-name {
+  display: inline-block;
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  background: var(--panel-2);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+/* HITL buttons inside narration when at approval step */
+.hitl-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px dashed #64748b;
+}
+
+.hitl-buttons strong {
+  display: block;
+  margin-bottom: 8px;
+  width: 100%;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hitl-buttons button {
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 100ms, box-shadow 200ms;
+}
+
+.hitl-buttons button.approve {
+  background: var(--approve);
+  color: white;
+}
+
+.hitl-buttons button.reject {
+  background: var(--reject);
+  color: white;
+}
+
+.hitl-buttons button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hitl-buttons button.active {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+footer {
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 16px 20px 32px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--panel-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+footer .legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+footer .legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot.simple { background: var(--route-simple); }
+.dot.tool { background: var(--route-tool); }
+.dot.missing { background: var(--route-missing_info); }
+.dot.risky { background: var(--route-risky); }
+.dot.error { background: var(--route-error); }
+.dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+.dot.fork { background: var(--fork); }
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+footer a:hover { text-decoration: underline; }
+
+.kbd {
+  display: inline-block;
+  background: var(--panel-2);
+  border: 1px solid #475569;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="controls">
+    <select id="scenario-picker"></select>
+    <span class="path-wrap" id="path-wrap">
+      <label>Path</label>
+      <select id="path-picker"></select>
+    </span>
+    <button id="prev" title="Previous step (←)">◀ Prev</button>
+    <span class="step-counter" id="counter">Step 0/0</span>
+    <button id="next" title="Next step (→)">Next ▶</button>
+    <button id="play" title="Auto-play (Space)">▶ Play</button>
+    <button id="reset" title="Reset to start">↺ Reset</button>
+    <span style="margin-left: auto; color: var(--muted); font-size: 12px;">
+      Shortcuts: <span class="kbd">←</span> <span class="kbd">→</span> <span class="kbd">Space</span> <span class="kbd">1</span>–<span class="kbd">7</span>
+    </span>
+  </div>
+  <p class="query" id="query">Query: <strong></strong></p>
+  <p class="scenario-header" id="scenario-header"></p>
+  <p class="alt-banner" id="alt-banner"></p>
+</header>
+
+<main>
+  <div class="graph-panel">
+    <svg class="graph" viewBox="0 0 800 720" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+        </marker>
+      </defs>
+
+      <g id="edges">
+        <path class="edge" id="edge-__start__-intake"      d="M 400 50 L 400 80" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-intake-classify"       d="M 400 120 L 400 160" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-classify-answer"       d="M 380 200 Q 240 240 175 260" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-classify-tool"         d="M 390 205 Q 350 240 325 260" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-classify-clarify"      d="M 410 205 Q 450 240 480 260" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-classify-risky_action" d="M 420 200 Q 560 240 600 260" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-classify-retry"        d="M 400 205 Q 380 380 325 460" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-tool-evaluate"         d="M 320 300 L 320 360" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-evaluate-answer"       d="M 295 380 Q 220 360 195 300" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-evaluate-retry"        d="M 320 400 L 320 460" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-clarify-finalize"      d="M 490 300 Q 450 480 420 540" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-risky_action-approval" d="M 610 300 L 610 360" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-approval-tool"         d="M 580 380 Q 480 340 350 290" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-approval-clarify"      d="M 600 360 Q 540 310 510 300" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-retry-tool"            d="M 320 460 Q 290 360 315 300" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-retry-dead_letter"     d="M 350 480 L 470 480" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-answer-finalize"       d="M 175 300 Q 230 480 380 540" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-dead_letter-finalize"  d="M 490 500 Q 460 530 420 540" marker-end="url(#arrowhead)"/>
+        <path class="edge" id="edge-finalize-__end__"      d="M 400 580 L 400 620" marker-end="url(#arrowhead)"/>
+      </g>
+
+      <g id="nodes">
+        <g class="node terminal" id="node-__start__" transform="translate(400,30)">
+          <rect x="-44" y="-18" width="88" height="36" rx="18"/><text>START</text>
+        </g>
+        <g class="node pending" id="node-intake" transform="translate(400,100)">
+          <rect x="-48" y="-20" width="96" height="40" rx="20"/><text>intake</text>
+        </g>
+        <g class="node pending" id="node-classify" transform="translate(400,180)">
+          <rect x="-52" y="-20" width="104" height="40" rx="20"/><text>classify</text>
+        </g>
+        <g class="node pending" id="node-answer" transform="translate(150,280)">
+          <rect x="-48" y="-20" width="96" height="40" rx="20"/><text>answer</text>
+        </g>
+        <g class="node pending" id="node-tool" transform="translate(320,280)">
+          <rect x="-40" y="-20" width="80" height="40" rx="20"/><text>tool</text>
+        </g>
+        <g class="node pending" id="node-clarify" transform="translate(490,280)">
+          <rect x="-48" y="-20" width="96" height="40" rx="20"/><text>clarify</text>
+        </g>
+        <g class="node pending" id="node-risky_action" transform="translate(610,280)">
+          <rect x="-60" y="-20" width="120" height="40" rx="20"/><text>risky_action</text>
+        </g>
+        <g class="node pending" id="node-evaluate" transform="translate(320,380)">
+          <rect x="-52" y="-20" width="104" height="40" rx="20"/><text>evaluate</text>
+        </g>
+        <g class="node pending" id="node-approval" transform="translate(610,380)">
+          <rect x="-52" y="-20" width="104" height="40" rx="20"/><text>approval</text>
+        </g>
+        <g class="node pending" id="node-retry" transform="translate(320,480)">
+          <rect x="-40" y="-20" width="80" height="40" rx="20"/><text>retry</text>
+        </g>
+        <g class="node pending" id="node-dead_letter" transform="translate(490,480)">
+          <rect x="-60" y="-20" width="120" height="40" rx="20"/><text>dead_letter</text>
+        </g>
+        <g class="node pending" id="node-finalize" transform="translate(400,560)">
+          <rect x="-52" y="-20" width="104" height="40" rx="20"/><text>finalize</text>
+        </g>
+        <g class="node terminal" id="node-__end__" transform="translate(400,640)">
+          <rect x="-36" y="-18" width="72" height="36" rx="18"/><text>END</text>
+        </g>
+      </g>
+
+      <!-- Fork marker (drawn around active node when on alt path) -->
+      <circle id="fork-marker" class="fork-marker" cx="0" cy="0" r="48"/>
+    </svg>
+  </div>
+
+  <div class="right-col">
+    <div class="panel">
+      <h3>Current State</h3>
+      <dl class="state" id="state-panel"></dl>
+    </div>
+    <div class="panel">
+      <h3>What's Happening</h3>
+      <div class="narration" id="narration"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="legend">
+    <span><span class="dot active"></span>Active</span>
+    <span><span class="dot simple"></span>simple</span>
+    <span><span class="dot tool"></span>tool</span>
+    <span><span class="dot missing"></span>missing_info</span>
+    <span><span class="dot risky"></span>risky</span>
+    <span><span class="dot error"></span>error</span>
+    <span><span class="dot fork"></span>alt path</span>
+  </div>
+  <div>
+    <a href="../reports/lab_report.md" target="_blank">Lab report ↗</a>
+    &nbsp;|&nbsp;
+    <a href="../outputs/metrics.json" target="_blank">metrics.json ↗</a>
+    &nbsp;|&nbsp;
+    <a href="../outputs/crash_resume_log.txt" target="_blank">crash-resume log ↗</a>
+  </div>
+</footer>
+
+<script>
+const NODE_NAMES = [
+  "intake","classify","answer","tool","clarify","risky_action",
+  "evaluate","approval","retry","dead_letter","finalize"
+];
+
+const state = {
+  traces: null,
+  scenarioIdx: 0,
+  pathKey: "default",
+  stepIdx: 0,
+  playing: false,
+  intervalId: null,
+};
+
+const $ = (id) => document.getElementById(id);
+
+async function init() {
+  try {
+    const resp = await fetch("traces.json");
+    state.traces = await resp.json();
+  } catch (e) {
+    document.body.innerHTML = `<div style="padding:40px;color:#fbbf24">
+      Could not load traces.json. Run via local server:
+      <code>python3 -m http.server --directory demo 8000</code> then open
+      http://localhost:8000<br><br>Error: ${e.message}</div>`;
+    return;
+  }
+  populateScenarioPicker();
+  wireControls();
+  wireKeyboard();
+  render();
+}
+
+function populateScenarioPicker() {
+  const sel = $("scenario-picker");
+  state.traces.scenarios.forEach((sc, i) => {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `${sc.id} — expects ${sc.expected_route}`;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change", () => {
+    state.scenarioIdx = parseInt(sel.value, 10);
+    state.pathKey = "default";
+    state.stepIdx = 0;
+    if (state.playing) togglePlay();
+    populatePathPicker();
+    render();
+  });
+  populatePathPicker();
+}
+
+function populatePathPicker() {
+  const wrap = $("path-wrap");
+  const sel = $("path-picker");
+  sel.innerHTML = "";
+  const sc = currentScenario();
+  const altKeys = Object.keys(sc.alt_paths || {});
+  if (altKeys.length === 0) {
+    wrap.classList.remove("shown");
+    return;
+  }
+  wrap.classList.add("shown");
+  const def = document.createElement("option");
+  def.value = "default";
+  def.textContent = "default";
+  sel.appendChild(def);
+  altKeys.forEach((k) => {
+    const opt = document.createElement("option");
+    opt.value = k;
+    opt.textContent = sc.alt_paths[k].label || k;
+    sel.appendChild(opt);
+  });
+  sel.value = state.pathKey;
+  sel.onchange = () => {
+    state.pathKey = sel.value;
+    state.stepIdx = 0;
+    if (state.playing) togglePlay();
+    render();
+  };
+}
+
+function wireControls() {
+  $("prev").addEventListener("click", () => goto(state.stepIdx - 1));
+  $("next").addEventListener("click", () => goto(state.stepIdx + 1));
+  $("play").addEventListener("click", togglePlay);
+  $("reset").addEventListener("click", () => {
+    state.stepIdx = 0;
+    if (state.playing) togglePlay();
+    render();
+  });
+}
+
+function wireKeyboard() {
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") { e.preventDefault(); goto(state.stepIdx + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); goto(state.stepIdx - 1); }
+    else if (e.key === " ") { e.preventDefault(); togglePlay(); }
+    else if (e.key >= "1" && e.key <= "7") {
+      const idx = parseInt(e.key, 10) - 1;
+      if (idx < state.traces.scenarios.length) {
+        state.scenarioIdx = idx;
+        state.pathKey = "default";
+        state.stepIdx = 0;
+        $("scenario-picker").value = String(idx);
+        if (state.playing) togglePlay();
+        populatePathPicker();
+        render();
+      }
+    }
+  });
+}
+
+function currentScenario() { return state.traces.scenarios[state.scenarioIdx]; }
+function currentSteps() {
+  const sc = currentScenario();
+  if (state.pathKey === "default") return sc.steps;
+  return sc.alt_paths[state.pathKey].steps;
+}
+function currentStep() { return currentSteps()[state.stepIdx]; }
+function currentRouteForColors() {
+  // Rejected risky paths actually route into clarify/missing_info-ish endings,
+  // but visually we still color the trail with the original "risky" route — it
+  // makes the divergence obvious against the rejected branch styling.
+  return currentScenario().expected_route;
+}
+
+function goto(i) {
+  const total = currentSteps().length;
+  const next = Math.max(0, Math.min(total - 1, i));
+  if (next === state.stepIdx) return;
+  state.stepIdx = next;
+  render();
+  if (state.playing && state.stepIdx === total - 1) togglePlay();
+}
+
+function togglePlay() {
+  state.playing = !state.playing;
+  $("play").textContent = state.playing ? "⏸ Pause" : "▶ Play";
+  if (state.playing) {
+    state.intervalId = setInterval(() => goto(state.stepIdx + 1), 1500);
+  } else {
+    clearInterval(state.intervalId);
+    state.intervalId = null;
+  }
+}
+
+function render() {
+  const sc = currentScenario();
+  const step = currentStep();
+  const steps = currentSteps();
+  $("query").innerHTML = `Query: <strong>${escapeHtml(sc.query)}</strong>`;
+  $("scenario-header").textContent = sc.header || "";
+  $("counter").textContent = `Step ${state.stepIdx + 1}/${steps.length}`;
+  $("prev").disabled = state.stepIdx === 0;
+  $("next").disabled = state.stepIdx === steps.length - 1;
+  renderAltBanner(sc);
+  renderGraph(sc, step, steps);
+  renderState(step);
+  renderNarration(sc, step);
+  // keep path picker in sync
+  const pp = $("path-picker");
+  if (pp) pp.value = state.pathKey;
+}
+
+function renderAltBanner(sc) {
+  const banner = $("alt-banner");
+  banner.classList.remove("shown", "rejected");
+  if (state.pathKey === "default") return;
+  banner.classList.add("shown");
+  const alt = sc.alt_paths[state.pathKey];
+  if (state.pathKey === "rejected") banner.classList.add("rejected");
+  banner.innerHTML = `<strong>Alt path: ${escapeHtml(alt.label)}</strong> — ${escapeHtml(alt.description || "")}`;
+}
+
+function renderGraph(sc, step, steps) {
+  const visited = new Set();
+  for (let i = 0; i <= state.stepIdx; i++) {
+    const n = steps[i].node;
+    if (NODE_NAMES.includes(n)) visited.add(n);
+  }
+  const active = step.node;
+  const routeClass = `route-${currentRouteForColors()}`;
+
+  document.querySelectorAll("g.node").forEach((g) => {
+    g.classList.remove("active", "route-simple","route-tool","route-missing_info","route-risky","route-error");
+    const nodeName = g.id.replace("node-", "");
+    if (g.id === `node-${active}`) {
+      g.classList.remove("pending", "visited");
+      g.classList.add("active");
+    } else if (visited.has(nodeName)) {
+      g.classList.remove("pending");
+      g.classList.add("visited", routeClass);
+    } else if (g.id === "node-__start__" || g.id === "node-__end__") {
+      g.classList.remove("pending");
+    } else {
+      g.classList.add("pending");
+      g.classList.remove("visited", "active");
+    }
+  });
+
+  document.querySelectorAll("path.edge").forEach((p) => {
+    p.classList.remove("traversed", "pulse",
+      "route-simple","route-tool","route-missing_info","route-risky","route-error");
+  });
+  let prev = "__start__";
+  for (let i = 0; i <= state.stepIdx; i++) {
+    const cur = steps[i].node === "start" ? "__start__" : steps[i].node;
+    if (cur === prev) continue;
+    const edge = document.getElementById(`edge-${prev}-${cur}`);
+    if (edge) {
+      edge.classList.add("traversed", routeClass);
+      if (i === state.stepIdx) edge.classList.add("pulse");
+    }
+    prev = cur;
+  }
+  if (state.stepIdx === steps.length - 1 && prev === "finalize") {
+    const e = document.getElementById("edge-finalize-__end__");
+    if (e) e.classList.add("traversed", routeClass);
+  }
+
+  // Fork marker for time-travel: ring around the fork-step node
+  const fork = $("fork-marker");
+  fork.classList.remove("shown");
+  if (state.pathKey === "time_travel_fork") {
+    const alt = sc.alt_paths.time_travel_fork;
+    if (alt && typeof alt.fork_step_index === "number") {
+      const forkNode = steps[alt.fork_step_index]?.node;
+      if (forkNode && NODE_NAMES.includes(forkNode)) {
+        const g = document.getElementById(`node-${forkNode}`);
+        if (g) {
+          const t = g.getAttribute("transform").match(/translate\(([\d.]+),([\d.]+)\)/);
+          if (t) {
+            fork.setAttribute("cx", t[1]);
+            fork.setAttribute("cy", t[2]);
+            fork.classList.add("shown");
+          }
+        }
+      }
+    }
+  }
+}
+
+function renderState(step) {
+  const panel = $("state-panel");
+  panel.innerHTML = "";
+  const s = step.state_after;
+  const diffKeys = new Set(step.diff_keys || []);
+  const order = ["route","risk_level","attempt","max_attempts","evaluation_result","approval",
+                 "proposed_action","pending_question","final_answer","messages","tool_results","errors","events"];
+  for (const key of order) {
+    if (!(key in s)) continue;
+    const dt = document.createElement("dt");
+    dt.textContent = key;
+    const dd = document.createElement("dd");
+    if (diffKeys.has(key)) dd.classList.add("just-changed");
+    const v = s[key];
+    if (Array.isArray(v)) {
+      if (v.length === 0) {
+        dd.textContent = "[]";
+        dd.classList.add("muted");
+      } else {
+        const det = document.createElement("details");
+        det.className = "array-field";
+        const sum = document.createElement("summary");
+        sum.textContent = `${v.length} item${v.length === 1 ? "" : "s"}`;
+        det.appendChild(sum);
+        const pre = document.createElement("pre");
+        pre.textContent = JSON.stringify(v, null, 2);
+        det.appendChild(pre);
+        dd.appendChild(det);
+      }
+    } else if (v === null || v === undefined || v === "") {
+      dd.textContent = "—";
+      dd.classList.add("muted");
+    } else if (typeof v === "object") {
+      dd.textContent = JSON.stringify(v);
+    } else {
+      dd.textContent = String(v);
+    }
+    panel.appendChild(dt);
+    panel.appendChild(dd);
+  }
+}
+
+function renderNarration(sc, step) {
+  const el = $("narration");
+  el.innerHTML = `<span class="node-name">${escapeHtml(step.node)}</span>${escapeHtml(step.narration)}`;
+  // HITL buttons at approval node for risky scenarios
+  if (step.node === "approval" && sc.requires_approval && sc.alt_paths && sc.alt_paths.rejected) {
+    const wrap = document.createElement("div");
+    wrap.className = "hitl-buttons";
+    wrap.innerHTML = `<strong>Human-in-the-loop intervention:</strong>`;
+    const approveBtn = document.createElement("button");
+    approveBtn.className = "approve" + (state.pathKey === "default" ? " active" : "");
+    approveBtn.textContent = "✓ Approve";
+    approveBtn.onclick = () => {
+      if (state.pathKey !== "default") {
+        state.pathKey = "default";
+        // Try to keep step on or after current approval index
+        state.stepIdx = Math.min(state.stepIdx, currentSteps().length - 1);
+        render();
+      }
+    };
+    const rejectBtn = document.createElement("button");
+    rejectBtn.className = "reject" + (state.pathKey === "rejected" ? " active" : "");
+    rejectBtn.textContent = "✗ Reject";
+    rejectBtn.onclick = () => {
+      if (state.pathKey !== "rejected") {
+        state.pathKey = "rejected";
+        state.stepIdx = Math.min(state.stepIdx, currentSteps().length - 1);
+        render();
+      }
+    };
+    wrap.appendChild(approveBtn);
+    wrap.appendChild(rejectBtn);
+    el.appendChild(wrap);
+  }
+  // Time-travel hint at fork node for S05
+  if (sc.id === "S05_error" && sc.alt_paths && sc.alt_paths.time_travel_fork) {
+    const alt = sc.alt_paths.time_travel_fork;
+    const forkNodeName = sc.steps[alt.fork_step_index]?.node;
+    if (state.pathKey === "default" && step.node === forkNodeName) {
+      const hint = document.createElement("div");
+      hint.className = "hitl-buttons";
+      hint.innerHTML = `<strong>Time travel available here:</strong>`;
+      const btn = document.createElement("button");
+      btn.className = "approve";
+      btn.style.background = "var(--fork)";
+      btn.textContent = "⏪ Fork from this checkpoint (inject attempt=2)";
+      btn.onclick = () => {
+        state.pathKey = "time_travel_fork";
+        render();
+      };
+      hint.appendChild(btn);
+      el.appendChild(hint);
+    }
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  })[c]);
+}
+
+init();
+</script>
+</body>
+</html>
